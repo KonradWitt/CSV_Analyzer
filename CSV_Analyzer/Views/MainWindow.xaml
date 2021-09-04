@@ -69,12 +69,23 @@
                                     <ColumnDefinition Width="*" />
                                 </Grid.ColumnDefinitions>
                                 <TextBlock Grid.Column="0" Text="{Binding Name}" />
-                                <CheckBox Grid.Column="1" Margin="10,0,0,0"/>
                             </Grid>
                         </DataTemplate>
                     </ListBox.ItemTemplate>
                 </ListBox>
             </StackPanel>
+            <StackPanel Orientation="Vertical">
+                <TextBlock Text="Selected variables:"/>
+                <DataGrid Name="ItemsControl_SelectedVariables"  ItemsSource="{Binding Path=SelectedDatasets, Mode=OneWay}" MinWidth="200" MinHeight="200" AutoGenerateColumns="False" SelectionMode="Extended" IsReadOnly="True">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Name" Binding="{Binding Name}" MinWidth="50"/>
+                        <DataGridTextColumn Header="Min" Binding="{Binding MinValue}" MinWidth="50" />
+                        <DataGridTextColumn Header="Max" Binding="{Binding MaxValue}" MinWidth="50" />
+                        <DataGridTextColumn Header="Avg" Binding="{Binding AvgValue}" MinWidth="50" />
+                    </DataGrid.Columns>                  
+                </DataGrid>
+            </StackPanel>
+            
         </StackPanel>
     </Grid>
 </Window>

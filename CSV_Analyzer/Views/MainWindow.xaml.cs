@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Linq;
+using System.Collections.ObjectModel;
 
 namespace CSV_Analyzer
 {
@@ -71,7 +72,7 @@ namespace CSV_Analyzer
         private List<Dataset> datasets;
         public List <Dataset> Datasets
         {
-            get { return datasets; }
+            get { return datasets;}
             set
             {
                 if (datasets != value)
@@ -82,7 +83,19 @@ namespace CSV_Analyzer
             }
         }
 
-        private List<Dataset> selectedDatasets = new();
+        private ObservableCollection<Dataset> selectedDatasets = new();
+        public ObservableCollection<Dataset> SelectedDatasets
+        {
+            get { return selectedDatasets; }
+            set
+            {
+                if (selectedDatasets != value)
+                {
+                    selectedDatasets = value;
+                }
+                OnPropertyChanged();
+            }
+        }
 
 
 
@@ -114,11 +127,6 @@ namespace CSV_Analyzer
             }
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
-        private void OnPropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
 
         private void ListBox_Variables_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
@@ -126,13 +134,20 @@ namespace CSV_Analyzer
             {
                 if (dataset.IsSelected && !selectedDatasets.Contains(dataset))
                 {
-                    selectedDatasets.Add(dataset);
+                    SelectedDatasets.Add(dataset);
                 }
                 else if (!dataset.IsSelected && selectedDatasets.Contains(dataset))
                 {
-                    selectedDatasets.Remove(dataset);
+                    SelectedDatasets.Remove(dataset);
                 }            
             }
         }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        private void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
     }
 }

@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "D:\\RepoWitt\\CSV_Analyzer\\CSV_Analyzer\\CSV_Analyzer\\CSV_Analyzer.csproj": {}
+    "D:\\RepoWitt\\CSV_Analyzer\\CSV_Analyzer\\CSV_Analyzer.csproj": {}
   },
   "projects": {
-    "D:\\RepoWitt\\CSV_Analyzer\\CSV_Analyzer\\CSV_Analyzer\\CSV_Analyzer.csproj": {
+    "D:\\RepoWitt\\CSV_Analyzer\\CSV_Analyzer\\CSV_Analyzer.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\RepoWitt\\CSV_Analyzer\\CSV_Analyzer\\CSV_Analyzer\\CSV_Analyzer.csproj",
+        "projectUniqueName": "D:\\RepoWitt\\CSV_Analyzer\\CSV_Analyzer\\CSV_Analyzer.csproj",
         "projectName": "CSV_Analyzer",
-        "projectPath": "D:\\RepoWitt\\CSV_Analyzer\\CSV_Analyzer\\CSV_Analyzer\\CSV_Analyzer.csproj",
+        "projectPath": "D:\\RepoWitt\\CSV_Analyzer\\CSV_Analyzer\\CSV_Analyzer.csproj",
         "packagesPath": "C:\\Users\\wittk\\.nuget\\packages\\",
-        "outputPath": "D:\\RepoWitt\\CSV_Analyzer\\CSV_Analyzer\\CSV_Analyzer\\obj\\",
+        "outputPath": "D:\\RepoWitt\\CSV_Analyzer\\CSV_Analyzer\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\wittk\\AppData\\Roaming\\NuGet\\NuGet.Config",
