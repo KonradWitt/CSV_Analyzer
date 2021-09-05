@@ -41,7 +41,7 @@
                     <TextBox Grid.Row="1" Grid.Column="1" Width="20" Margin="10,2,10,2" Text="{Binding Path = ColumnIndexTime, Mode=TwoWay}"/>
                     <TextBox Grid.Row="2" Grid.Column="1" Width="20" Margin="10,2,10,2" Text="{Binding Path = ColumnIndexValue, Mode=TwoWay}"/>
                 </Grid>
- 
+
             </StackPanel>
             <Button
                 Name="Button_ImportFile"
@@ -84,6 +84,21 @@
                         <DataGridTextColumn Header="Avg" Binding="{Binding AvgValue}" MinWidth="50" />
                     </DataGrid.Columns>                  
                 </DataGrid>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="20"/>
+                        <RowDefinition Height="20"/>
+                    </Grid.RowDefinitions>
+                    <TextBlock Grid.Row="0" Grid.Column="0" Margin="0,0,10,0" Text="Timeframe Start"/>
+                    <TextBlock Grid.Row="1" Grid.Column="0" Margin="0,0,10,0" Text="Timeframe End"/>
+                    <TextBox Name="TextBox_TimeframeStart" Grid.Row="0"  Grid.Column="1" HorizontalAlignment="Left" Text="{Binding Path=SelectedTimeStart, Mode=TwoWay,  StringFormat='yyyy-MM-dd HH:mm:ss '}" VerticalAlignment="Top" Width="120" TextChanged="TextBox_TimeframeStart_TextChanged"/>
+                    <TextBox Name="TextBox_TimeframeEnd" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Left" Text="{Binding Path=SelectedTimeEnd, Mode=TwoWay,  StringFormat='yyyy-MM-dd HH:mm:ss '}" VerticalAlignment="Top" Width="120" TextChanged="TextBox_TimeframeEnd_TextChanged"/>
+                </Grid>
+                
             </StackPanel>
             
         </StackPanel>

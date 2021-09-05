@@ -1,8 +1,21 @@
 {
   "version": 2,
-  "dgSpecHash": "nlQSeFUvPBcZ/d0qz1i/Gibeks2KYOs3cjPmkIwjEqNPbFe3RQs0+4vSwsW+CTSO4wfvrdlR+4yq8aEkbF0+hQ==",
+  "dgSpecHash": "hc6dVvP0mQZGLxHzQc6N0P7CAWE0CbpD/WaYQyiVUk0eLLoowstYXPpEr2c3C/XVKSg3XtTjb1DRiV/UKlcSwQ==",
   "success": true,
   "projectFilePath": "D:\\RepoWitt\\CSV_Analyzer\\CSV_Analyzer\\CSV_Analyzer.csproj",
-  "expectedPackageFiles": [],
-  "logs": []
+  "expectedPackageFiles": [
+    "C:\\Users\\wittk\\.nuget\\packages\\extended.wpf.toolkit\\4.1.0\\extended.wpf.toolkit.4.1.0.nupkg.sha512"
+  ],
+  "logs": [
+    {
+      "code": "NU1701",
+      "level": "Warning",
+      "warningLevel": 1,
+      "message": "Pakiet „Extended.Wpf.Toolkit 4.1.0” został przywrócony przy użyciu elementu „.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8” zamiast platformy docelowej projektu „net5.0-windows7.0”. Ten pakiet może nie być w pełni kompatybilny z Twoim projektem.",
+      "libraryId": "Extended.Wpf.Toolkit",
+      "targetGraphs": [
+        "net5.0-windows7.0"
+      ]
+    }
+  ]
 }

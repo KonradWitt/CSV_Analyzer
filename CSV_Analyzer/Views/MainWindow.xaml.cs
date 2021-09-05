@@ -7,6 +7,7 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Linq;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 
 namespace CSV_Analyzer
 {
@@ -83,8 +84,8 @@ namespace CSV_Analyzer
             }
         }
 
-        private ObservableCollection<Dataset> selectedDatasets = new();
-        public ObservableCollection<Dataset> SelectedDatasets
+        private BindingList<Dataset> selectedDatasets = new();
+        public BindingList<Dataset> SelectedDatasets
         {
             get { return selectedDatasets; }
             set
@@ -97,7 +98,34 @@ namespace CSV_Analyzer
             }
         }
 
+        private DateTime selectedTimeStart = DateTime.Now.AddHours(-1);
+        public DateTime SelectedTimeStart
+        {
+            get { return selectedTimeStart; }
+            set
+            {
+                if (selectedTimeStart != value)
+                {
+                    selectedTimeStart = value;
+                    OnPropertyChanged();
+                }               
+            }
+        }
 
+        private DateTime selectedTimeEnd = DateTime.Now;
+        public DateTime SelectedTimeEnd
+        {
+            get { return selectedTimeEnd; }
+            set
+            {
+                if (selectedTimeEnd != value)
+                {
+                    selectedTimeEnd = value;
+                    OnPropertyChanged();
+                }
+                
+            }
+        }
 
         public MainWindow()
         {
@@ -112,7 +140,6 @@ namespace CSV_Analyzer
                 CSVHelper csvHelper = new(filePath, columnIndexName, columnIndexTime, columnIndexValue);
                 Datasets = csvHelper.ImportCSV();
             }
-            var datetime = DateTime.Parse("29.08.2021 15:23");
         }
 
         private void Button_SelectFile_Click(object sender, RoutedEventArgs e)
@@ -141,6 +168,39 @@ namespace CSV_Analyzer
                     SelectedDatasets.Remove(dataset);
                 }            
             }
+
+            if (SelectedDatasets.Any())
+            {
+                SelectedTimeStart = SelectedDatasets[0].SelectedTimeStart;
+                SelectedTimeEnd = SelectedDatasets[0].SelectedTimeEnd;
+            }
+        }
+        private void Timeframe_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
+        {
+            foreach (Dataset dataset in SelectedDatasets)
+            {
+                dataset.SelectedTimeStart = selectedTimeStart;
+                dataset.SelectedTimeEnd = selectedTimeEnd;
+                dataset.UpdateStatistics();
+            }
+        }
+
+        private void TextBox_TimeframeStart_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
+        {
+            foreach (Dataset dataset in SelectedDatasets)
+            {
+                dataset.SelectedTimeStart = selectedTimeStart;
+                dataset.UpdateStatistics();
+            }
+        }
+
+        private void TextBox_TimeframeEnd_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
+        {
+            foreach (Dataset dataset in SelectedDatasets)
+            {
+                dataset.SelectedTimeEnd = selectedTimeEnd;
+                dataset.UpdateStatistics();
+            }
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -148,6 +208,7 @@ namespace CSV_Analyzer
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
+
 
     }
 }
