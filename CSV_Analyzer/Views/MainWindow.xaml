@@ -3,9 +3,11 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:CSV_Analyzer"
+        xmlns:oxyPlot="clr-namespace:OxyPlot;assembly=OxyPlot"
+        xmlns:oxy="http://oxyplot.org/wpf"
+    xmlns:local="clr-namespace:CSV_Analyzer"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800"
+        Title="MainWindow" Height="550" Width="1200"
         ResizeMode="CanMinimize">
     <Grid>
         <Grid.RowDefinitions>
@@ -55,7 +57,7 @@
         <StackPanel Grid.Row="1" Orientation="Horizontal" VerticalAlignment="Center">
             <StackPanel Orientation="Vertical">
                 <TextBlock Text="Available variables:"/>
-                <ListBox Name="ListBox_Variables"  ItemsSource="{Binding Path=Datasets}"  SelectionMode="Multiple" SelectionChanged="ListBox_Variables_SelectionChanged" MinWidth="200" MinHeight="200">
+                <ListBox Name="ListBox_Variables" MaxHeight="180" ItemsSource="{Binding Path=Datasets}"  SelectionMode="Multiple" SelectionChanged="ListBox_Variables_SelectionChanged" ScrollViewer.VerticalScrollBarVisibility="Auto" MinWidth="300" MinHeight="200">
                     <ListBox.ItemContainerStyle>
                         <Style TargetType="{x:Type ListBoxItem}">
                             <Setter Property="IsSelected" Value="{Binding IsSelected}"/>
@@ -76,12 +78,22 @@
             </StackPanel>
             <StackPanel Orientation="Vertical">
                 <TextBlock Text="Selected variables:"/>
-                <DataGrid Name="ItemsControl_SelectedVariables"  ItemsSource="{Binding Path=SelectedDatasets, Mode=OneWay}" MinWidth="200" MinHeight="200" AutoGenerateColumns="False" SelectionMode="Extended" IsReadOnly="True">
+                <DataGrid MaxHeight="180" Name="ItemsControl_SelectedVariables" ItemsSource="{Binding Path=Datasets, Mode=TwoWay}" MinWidth="263" MaxWidth="263" MinHeight="200" AutoGenerateColumns="False" SelectionMode="Extended" IsReadOnly="True" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+                    <DataGrid.ItemContainerStyle>
+                        <Style TargetType="DataGridRow">
+                            <Setter Property="Visibility" Value="Collapsed" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsSelected}" Value="True">
+                                    <Setter Property="Visibility" Value="Visible" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </DataGrid.ItemContainerStyle>
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="Name" Binding="{Binding Name}" MinWidth="50"/>
-                        <DataGridTextColumn Header="Min" Binding="{Binding MinValue}" MinWidth="50" />
-                        <DataGridTextColumn Header="Max" Binding="{Binding MaxValue}" MinWidth="50" />
-                        <DataGridTextColumn Header="Avg" Binding="{Binding AvgValue}" MinWidth="50" />
+                        <DataGridTextColumn Header="Min" Binding="{Binding MinValue}" MinWidth="50"/>
+                        <DataGridTextColumn Header="Max" Binding="{Binding MaxValue}" MinWidth="50"/>
+                        <DataGridTextColumn Header="Avg" Binding="{Binding AvgValue}" MinWidth="50"/>
                     </DataGrid.Columns>                  
                 </DataGrid>
                 <Grid>
@@ -89,18 +101,29 @@
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="20"/>
-                        <RowDefinition Height="20"/>
-                    </Grid.RowDefinitions>
-                    <TextBlock Grid.Row="0" Grid.Column="0" Margin="0,0,10,0" Text="Timeframe Start"/>
-                    <TextBlock Grid.Row="1" Grid.Column="0" Margin="0,0,10,0" Text="Timeframe End"/>
-                    <TextBox Name="TextBox_TimeframeStart" Grid.Row="0"  Grid.Column="1" HorizontalAlignment="Left" Text="{Binding Path=SelectedTimeStart, Mode=TwoWay,  StringFormat='yyyy-MM-dd HH:mm:ss '}" VerticalAlignment="Top" Width="120" TextChanged="TextBox_TimeframeStart_TextChanged"/>
-                    <TextBox Name="TextBox_TimeframeEnd" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Left" Text="{Binding Path=SelectedTimeEnd, Mode=TwoWay,  StringFormat='yyyy-MM-dd HH:mm:ss '}" VerticalAlignment="Top" Width="120" TextChanged="TextBox_TimeframeEnd_TextChanged"/>
+                    <Grid Grid.Column="0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="20"/>
+                            <RowDefinition Height="20"/>
+                        </Grid.RowDefinitions>
+                        <TextBlock Grid.Row="0" Grid.Column="0" Margin="0,0,10,0" Text="Timeframe Start"/>
+                        <TextBlock Grid.Row="1" Grid.Column="0" Margin="0,0,10,0" Text="Timeframe End"/>
+                        <TextBox Name="TextBox_TimeframeStart" Grid.Row="0"  Grid.Column="1" HorizontalAlignment="Left" Text="{Binding Path=SelectedTimeStart, Mode=TwoWay,  StringFormat='yyyy-MM-dd HH:mm:ss '}" VerticalAlignment="Top" Width="120"/>
+                        <TextBox Name="TextBox_TimeframeEnd" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Left" Text="{Binding Path=SelectedTimeEnd, Mode=TwoWay,  StringFormat='yyyy-MM-dd HH:mm:ss '}" VerticalAlignment="Top" Width="120"/>
+                    </Grid>
+                    <Button Name="Button_ApplyTimeframes" Grid.Column="1" Content="Apply" Height="40" Width="50" Click="Button_ApplyTimeframes_Click"/>
                 </Grid>
-                
             </StackPanel>
-            
+
+            <Grid MinWidth="600" MinHeight="300">
+                <oxy:PlotView x:Name="Plot_SelectedVariables" Model="{Binding PlotModel}"  Grid.Row="1">
+
+                </oxy:PlotView>
+            </Grid>
         </StackPanel>
     </Grid>
 </Window>

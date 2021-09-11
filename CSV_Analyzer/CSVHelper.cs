@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
@@ -56,8 +57,26 @@ namespace CSV_Analyzer
 
             for (int i=0; i< uniqueNamesNumber; i++)
             {
-                Dataset dataset = new(uniqueNames[i], filteredLines.Where(filteredLine => filteredLine[indexName] == uniqueNames[i]).ToList());
-                datasets.Add(dataset);
+                List<DateTime> times = new();
+                List<double> values = new();
+
+
+                foreach (string[] filteredLine in filteredLines.Where(filteredLine => filteredLine[indexName] == uniqueNames[i]).ToList())
+                {
+                    try
+                    {
+                        times.Add(DateTime.Parse(filteredLine[indexTime]));
+                        values.Add(String2Double.GetDouble(filteredLine[indexValue], 0));
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine("Failed to parse some values from CSV file {0}", e.Source);
+                    }
+
+                }
+
+                Dataset dataset = new(uniqueNames[i], times, values);
+                datasets.Add(dataset);               
             }
 
             return datasets;

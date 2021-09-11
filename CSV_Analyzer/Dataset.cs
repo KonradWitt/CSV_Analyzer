@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
 
 namespace CSV_Analyzer
 {
-    public class Dataset
+    public class Dataset : INotifyPropertyChanged
     {
         const int indexName = 0;
         const int indexTime = 1;
@@ -19,146 +20,191 @@ namespace CSV_Analyzer
                 if (isSelected != value)
                 {
                     isSelected = value;
+                    OnPropertyChanged();
                 }
             }
         }
 
+        private string name;
         public string Name
         {
-            get;
-            private set;
-        }
-        public List<string[]> DataList
-        {
-            get;
-            set;
-        }
-
-        public List<double> DataListDouble
-        {
-            get;
-            private set;
+            get { return name; }
+            private set
+            {
+                if (name != value)
+                {
+                    name = value;
+                    OnPropertyChanged();
+                }
+            }
         }
 
+
+        private List<double> values;
+        public List<double> Values
+        {
+            get { return values; }
+            private set
+            {
+                if (values != value)
+                {
+                    values = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        private List<DateTime> times;
+        public List<DateTime> Times
+        {
+            get { return times; }
+            private set 
+            { 
+            if (times != value)
+                {
+                    times = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        private List<double> selectedValues;
+        public List<double> SelectedValues
+        {
+            get { return selectedValues; }
+            set
+            {
+                if(selectedValues!=value)
+                {
+                    selectedValues = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        private List<DateTime> selectedTimes;
+        public List<DateTime> SelectedTimes
+        {
+            get { return selectedTimes; }
+            set 
+            {
+                if (selectedTimes != value)
+                {
+                    selectedTimes = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        private double minValue;
         public double MinValue
         {
-            get;
-            private set;
-        }
-        public double MaxValue
-        {
-            get;
-            private set;
+            get { return minValue; }
+            private set {
+                if (minValue != value)
+                {
+                    minValue = value;
+                    OnPropertyChanged();
+                }
+            }
         }
 
+        private double maxValue;
+        public double MaxValue
+        {
+            get { return maxValue; }
+            private set
+            {
+                if (maxValue != value)
+                {
+                    maxValue = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        private double avgValue;
         public double AvgValue
         {
-            get;
-            private set;
+            get { return avgValue; }
+            private set
+            {
+                if (avgValue != value)
+                {
+                    avgValue = value;
+                    OnPropertyChanged();
+                }
+            }
         }
 
         private DateTime timeStart;
 
-        public DateTime SelectedTimeStart
+        public DateTime TimeStart
         {
-            get;
-            set;
+            get { return timeStart; }
+            set { 
+                if (timeStart != value)
+                {
+                    timeStart = value;
+                    OnPropertyChanged();
+                }
+            }
         }
-
 
         private DateTime timeEnd;
-        public DateTime SelectedTimeEnd
+        public DateTime TimeEnd
         {
-            get;
-            set;
-        }
-
-        public Dataset(string _name, List<string[]> _dataList)
-        {
-            Name = _name;
-            DataList = _dataList;
-            DataListDouble = generateDoubleList(DataList);
-            checkTimeframe();
-            SelectedTimeStart = timeStart;
-            SelectedTimeEnd = timeEnd;
-            calculateMin(timeStart, timeEnd);
-            calculateMax(timeStart, timeEnd);
-            calculateAvg(timeStart, timeEnd);
-        }
-
-        private List<double> generateDoubleList(List<string[]> StringList)
-        {
-            List<double> DoubleList = new();
-            foreach (string[] data in StringList)
+            get { return timeEnd; }
+            set
             {
-                DoubleList.Add(String2Double.GetDouble(data[indexValue], 0.0));
+                if (timeEnd != value)
+                {
+                    timeEnd = value;
+                    OnPropertyChanged();
+                }
             }
-
-            return DoubleList;
         }
 
-
-        private void calculateMin(DateTime timeStart, DateTime timeEnd)
+        public Dataset(string _name, List<DateTime> _times, List<double> _values)
         {
-            int[] indexes = timeframe2Index(timeStart, timeEnd);
-            int startIndex = indexes[0];
-            int count = indexes[1]-indexes[0]+1;
-            MinValue = DataListDouble.GetRange(startIndex, count).Min();
+            name = _name;
+            times = _times;
+            selectedTimes = times;
+            values = _values;
+            selectedValues = values;
+            checkTimeframe();
+            TimeStart = timeStart;
+            TimeEnd = timeEnd;
+            UpdateStatistics();
         }
 
-        private void calculateMax(DateTime timeStart, DateTime timeEnd)
-        {
-            int[] indexes = timeframe2Index(timeStart, timeEnd);
-            int startIndex = indexes[0];
-            int count = indexes[1] - indexes[0] + 1;
-            MaxValue = DataListDouble.GetRange(startIndex, count).Max();
-        }
-
-        private void calculateAvg(DateTime timeStart, DateTime timeEnd)
-        {
-            int[] indexes = timeframe2Index(timeStart, timeEnd);
-            int startIndex = indexes[0];
-            int count = indexes[1] - indexes[0] + 1;
-            AvgValue = Math.Round(DataListDouble.GetRange(startIndex, count).Average(),2);
-        }
 
         public void UpdateStatistics()
         {
-            calculateMin(SelectedTimeStart, SelectedTimeEnd);
-            calculateMax(SelectedTimeStart, SelectedTimeEnd);
-            calculateAvg(SelectedTimeStart, SelectedTimeEnd);
+            MinValue = selectedValues.Min();
+            MaxValue = selectedValues.Max();
+            AvgValue = Math.Round(selectedValues.Average(), 2);
+        }
+
+        public void UpdateTimeFrame(DateTime timeStart, DateTime timeEnd)
+        {
+            int[] indexes = DateTimeFrame2Indexes.GetIndexes(timeStart, timeEnd, times);
+            int startIndex = indexes[0];
+            int count = indexes[1] - indexes[0] + 1;
+            selectedTimes = times.GetRange(startIndex, count);
+            selectedValues = values.GetRange(startIndex, count);
         }
 
         private void checkTimeframe()
         {
-            List<DateTime> timeList = new List<DateTime>();
-
-            foreach (string[] data in DataList)
-            {
-                timeList.Add(DateTime.Parse(data[indexTime]));
-            }
-
-            timeStart = timeList.Min(p => p);
-            timeEnd = timeList.Max(p => p);
+            timeStart = times.Min(p => p);
+            timeEnd = times.Max(p => p);
         }
 
-        private int[] timeframe2Index(DateTime timeStart, DateTime timeEnd)
+        public event PropertyChangedEventHandler PropertyChanged;
+        private void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
-            int[] TimeframeIndexes = {0, 0};
-            DateTime checkedDateTime;
-            for(int i=0; i<DataList.Count; i++)
-            {
-                checkedDateTime = DateTime.Parse(DataList[i][indexTime]);
-                if (checkedDateTime >= timeStart && TimeframeIndexes[0] == 0)
-                {
-                    TimeframeIndexes[0] = i;
-                }
-                if (checkedDateTime <= timeEnd)
-                {
-                    TimeframeIndexes[1] = i;
-                }
-            }
-            return TimeframeIndexes;
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }
