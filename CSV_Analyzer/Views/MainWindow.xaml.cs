@@ -2,21 +2,18 @@
 using System;
 using System.IO;
 using System.Windows;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Linq;
 using System.Collections.ObjectModel;
 using OxyPlot;
-//using OxyPlot.Wpf;
-using OxyPlot.Annotations;
 using OxyPlot.Axes;
 using OxyPlot.Series;
 
 namespace CSV_Analyzer
 {
     public partial class MainWindow : INotifyPropertyChanged
-    { 
+    {
         private string filePath;
         private string fileName = "Please select file";
         public string FileName
@@ -77,7 +74,7 @@ namespace CSV_Analyzer
         private ObservableCollection<Dataset> datasets;
         public ObservableCollection<Dataset> Datasets
         {
-            get { return datasets;}
+            get { return datasets; }
             set
             {
                 if (datasets != value)
@@ -99,7 +96,7 @@ namespace CSV_Analyzer
                 {
                     selectedTimeStart = value;
                     OnPropertyChanged();
-                }               
+                }
             }
         }
 
@@ -114,7 +111,7 @@ namespace CSV_Analyzer
                     selectedTimeEnd = value;
                     OnPropertyChanged();
                 }
-                
+
             }
         }
 
@@ -130,8 +127,9 @@ namespace CSV_Analyzer
         {
             if (File.Exists(filePath))
             {
-                CSVHelper csvHelper = new(filePath, columnIndexName, columnIndexTime, columnIndexValue);
-                Datasets = new ObservableCollection<Dataset>(csvHelper.ImportCSV());
+                var csvHelper = new CsvHelper();
+
+                Datasets = new ObservableCollection<Dataset>(csvHelper.ImportCSV(filePath, columnIndexName, columnIndexTime, columnIndexValue).Values);
             }
         }
 
@@ -139,7 +137,7 @@ namespace CSV_Analyzer
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
             openFileDialog.Filter = "Comma Separated Values Files (*.csv)|*.csv|All files (*.*)|*.*";
-            openFileDialog.InitialDirectory = Directory.GetCurrentDirectory(); 
+            openFileDialog.InitialDirectory = Directory.GetCurrentDirectory();
             if (openFileDialog.ShowDialog() == true)
             {
                 filePath = openFileDialog.FileName;
@@ -150,32 +148,31 @@ namespace CSV_Analyzer
 
         private void ListBox_Variables_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
-
-            if (Datasets.Any(p => p.IsSelected == true))
+            foreach (Dataset dataset in Datasets.Where(p => p.IsSelected))
             {
-                SelectedTimeStart = Datasets.Where(p => p.IsSelected).First().TimeStart;
-                SelectedTimeEnd = Datasets.Where(p => p.IsSelected).First().TimeEnd;
-                
+                dataset.CheckTimeFrame();
+                SelectedTimeStart = dataset.TimeStart;
+                SelectedTimeEnd = dataset.TimeEnd;
             }
-            updatePlotModel();             
+            
+            updatePlotModel();
         }
 
 
         private void Button_ApplyTimeframes_Click(object sender, RoutedEventArgs e)
         {
-            foreach (Dataset dataset in Datasets.Where(p => p.IsSelected == true))
+            foreach (Dataset dataset in Datasets.Where(p => p.IsSelected))
             {
                 dataset.TimeStart = selectedTimeStart;
                 dataset.TimeEnd = selectedTimeEnd;
                 dataset.UpdateTimeFrame(selectedTimeStart, selectedTimeEnd);
-                dataset.UpdateStatistics();
             }
 
-            if (Datasets.Any(p => p.IsSelected == true))
+            if (Datasets.Any(p => p.IsSelected))
             {
                 updatePlotModel();
             }
-            
+
         }
 
         private PlotModel plotModel;
@@ -200,7 +197,7 @@ namespace CSV_Analyzer
             PlotModel.LegendPosition = LegendPosition.TopRight;
             PlotModel.LegendBackground = OxyColor.FromAColor(200, OxyColors.White);
             PlotModel.LegendBorder = OxyColors.Black;
-            var dateAxis = new OxyPlot.Axes.DateTimeAxis() { MajorGridlineStyle = LineStyle.Solid, MinorGridlineStyle = LineStyle.Dot, IntervalLength = 30, StringFormat = "dd.MM.yyyy hh:mm", Angle = 45, Minimum = DateTimeAxis.ToDouble(selectedTimeStart), Maximum = DateTimeAxis.ToDouble(selectedTimeEnd)};
+            var dateAxis = new OxyPlot.Axes.DateTimeAxis() { MajorGridlineStyle = LineStyle.Solid, MinorGridlineStyle = LineStyle.Dot, IntervalLength = 30, StringFormat = "dd.MM.yyyy hh:mm", Angle = 45, Minimum = DateTimeAxis.ToDouble(selectedTimeStart), Maximum = DateTimeAxis.ToDouble(selectedTimeEnd) };
             PlotModel.Axes.Add(dateAxis);
             var valueAxis = new OxyPlot.Axes.LinearAxis() { MajorGridlineStyle = LineStyle.Solid, IntervalLength = 25, MinorGridlineStyle = LineStyle.Dot, Title = "Value" };
             PlotModel.Axes.Add(valueAxis);
@@ -212,26 +209,26 @@ namespace CSV_Analyzer
         {
             for (int i = PlotModel.Series.Count - 1; i >= 0; i--)
             {
-                if (!Datasets.Where(p=>p.IsSelected==true).Any(p => p.Name == PlotModel.Series[i].Title))
+                if (!Datasets.Where(p => p.IsSelected).Any(p => p.Name == PlotModel.Series[i].Title))
                 {
                     PlotModel.Series.RemoveAt(i);
                 }
             }
 
-            
-                foreach (var selectedDataset in Datasets.Where(p => p.IsSelected == true))
+
+            foreach (var selectedDataset in Datasets.Where(p => p.IsSelected))
+            {
+                if (!PlotModel.Series.Any(p => p.Title == selectedDataset.Name))
                 {
-                    if (!PlotModel.Series.Any(p => p.Title == selectedDataset.Name))
+                    var lineserie = new LineSeries();
+                    foreach (var timestamp in selectedDataset.Times)
                     {
-                        var lineserie = new LineSeries();
-                        foreach (var timestamp in selectedDataset.Times)
-                        {
-                            lineserie.Points.Add(new DataPoint(DateTimeAxis.ToDouble(timestamp), selectedDataset.Values[selectedDataset.Times.IndexOf(timestamp)]));
-                        }
-                        lineserie.Title = selectedDataset.Name;
-                        PlotModel.Series.Add(lineserie);
+                        lineserie.Points.Add(new DataPoint(DateTimeAxis.ToDouble(timestamp), selectedDataset.Values[selectedDataset.Times.IndexOf(timestamp)]));
                     }
+                    lineserie.Title = selectedDataset.Name;
+                    PlotModel.Series.Add(lineserie);
                 }
+            }
 
 
             PlotModel.Axes[0].Minimum = DateTimeAxis.ToDouble(selectedTimeStart);

@@ -27,7 +27,6 @@ D:\RepoWitt\CSV_Analyzer\CSV_Analyzer\bin\Debug\net5.0-windows\CSV_Analyzer.runt
 D:\RepoWitt\CSV_Analyzer\CSV_Analyzer\bin\Debug\net5.0-windows\CSV_Analyzer.dll
 D:\RepoWitt\CSV_Analyzer\CSV_Analyzer\bin\Debug\net5.0-windows\ref\CSV_Analyzer.dll
 D:\RepoWitt\CSV_Analyzer\CSV_Analyzer\bin\Debug\net5.0-windows\CSV_Analyzer.pdb
-D:\RepoWitt\CSV_Analyzer\CSV_Analyzer\obj\Debug\net5.0-windows\CSV_Analyzer.csproj.AssemblyReference.cache
 D:\RepoWitt\CSV_Analyzer\CSV_Analyzer\obj\Debug\net5.0-windows\Views\MainWindow.g.cs
 D:\RepoWitt\CSV_Analyzer\CSV_Analyzer\obj\Debug\net5.0-windows\App.g.cs
 D:\RepoWitt\CSV_Analyzer\CSV_Analyzer\obj\Debug\net5.0-windows\CSV_Analyzer_MarkupCompile.cache
@@ -45,3 +44,4 @@ D:\RepoWitt\CSV_Analyzer\CSV_Analyzer\obj\Debug\net5.0-windows\CSV_Analyzer.genr
 D:\RepoWitt\CSV_Analyzer\CSV_Analyzer\obj\Debug\net5.0-windows\CSV_Analyzer.csproj.CopyComplete
 D:\RepoWitt\CSV_Analyzer\CSV_Analyzer\bin\Debug\net5.0-windows\OxyPlot.dll
 D:\RepoWitt\CSV_Analyzer\CSV_Analyzer\bin\Debug\net5.0-windows\OxyPlot.Wpf.dll
+D:\RepoWitt\CSV_Analyzer\CSV_Analyzer\obj\Debug\net5.0-windows\CSV_Analyzer.csproj.AssemblyReference.cache

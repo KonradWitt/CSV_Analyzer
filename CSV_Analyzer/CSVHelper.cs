@@ -5,78 +5,31 @@ using System.Linq;
 
 namespace CSV_Analyzer
 {
-    class CSVHelper
+    class CsvHelper
     {
-        const int indexName = 0;
-        const int indexTime = 1;
-        const int indexValue = 2;
-
-        private string filePath;
-        private int columnIndexName;
-        private int columnIndexTime;
-        private int columnIndexValue;
-
-        public CSVHelper(string _filePath, int _columnIndexName, int _columnIndexTime, int _columnIndexValue)
+        public Dictionary<string, Dataset> ImportCSV(string filePath, int columnIndexName, int columnIndexTime, int columnIndexValue)
         {
-            filePath = _filePath;
-            columnIndexName = _columnIndexName;
-            columnIndexTime = _columnIndexTime;
-            columnIndexValue = _columnIndexValue;
-        }
+            List<string[]> lines = File.ReadAllLines(filePath).Select(a => a.Split(';')).ToList();
 
-        public List<Dataset> ImportCSV()
-        {
-            List<Dataset> datasets = new();
-            int uniqueNamesNumber = 0;
-            List<string> uniqueNames = new();
-
-            var lines = File.ReadAllLines(filePath).Select(a => a.Split(';')).ToList(); 
-            List<string[]> filteredLines = new();
+            var datasets = new Dictionary<string, Dataset>();
 
             foreach (string[] line in lines)
             {
-                string[] filteredLine = new string[3];
-                filteredLine[0] = line[columnIndexName];
-                filteredLine[1] = line[columnIndexTime];
-                filteredLine[2] = line[columnIndexValue];
-                filteredLines.Add(filteredLine);
-            }
+                string name = line[columnIndexName];
+                string time = line[columnIndexTime];
+                string value = line[columnIndexValue];
 
-            foreach (string[] filteredLine in filteredLines)
-            {
-                if (!uniqueNames.Contains(filteredLine[indexName]))
+                if (datasets.ContainsKey(name))
                 {
-                    uniqueNames.Add(filteredLine[indexName]);
-                    uniqueNamesNumber += 1;
+                    var dataset = datasets[name];
+
+                    dataset.AddTime(time);
+                    dataset.AddValue(value);
                 }
                 else
                 {
-                    break;
+                    datasets.Add(name, new Dataset(name, time, value));
                 }
-            }
-
-            for (int i=0; i< uniqueNamesNumber; i++)
-            {
-                List<DateTime> times = new();
-                List<double> values = new();
-
-
-                foreach (string[] filteredLine in filteredLines.Where(filteredLine => filteredLine[indexName] == uniqueNames[i]).ToList())
-                {
-                    try
-                    {
-                        times.Add(DateTime.Parse(filteredLine[indexTime]));
-                        values.Add(String2Double.GetDouble(filteredLine[indexValue], 0));
-                    }
-                    catch (Exception e)
-                    {
-                        Console.WriteLine("Failed to parse some values from CSV file {0}", e.Source);
-                    }
-
-                }
-
-                Dataset dataset = new(uniqueNames[i], times, values);
-                datasets.Add(dataset);               
             }
 
             return datasets;

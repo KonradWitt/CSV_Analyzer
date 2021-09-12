@@ -8,10 +8,29 @@ namespace CSV_Analyzer
 {
     public class Dataset : INotifyPropertyChanged
     {
-        const int indexName = 0;
-        const int indexTime = 1;
-        const int indexValue = 2;
+        public event PropertyChangedEventHandler PropertyChanged;
+
         private bool isSelected;
+        private List<double> values;
+        private List<DateTime> times;
+        private double minValue;
+        private double maxValue;
+        private double avgValue;
+        private DateTime timeStart;
+        private DateTime timeEnd;
+
+        public Dataset(string _name, string _time, string _value)
+        {
+            values = new List<double>();
+            times = new List<DateTime>();
+            Name = _name;
+            AddTime(_time);
+            AddValue(_value);
+            OnPropertyChanged("TimeStart");
+            OnPropertyChanged("TimeEnd");
+            UpdateTimeFrame(TimeStart, TimeEnd);
+        }
+
         public bool IsSelected
         {
             get { return isSelected; }
@@ -25,22 +44,8 @@ namespace CSV_Analyzer
             }
         }
 
-        private string name;
-        public string Name
-        {
-            get { return name; }
-            private set
-            {
-                if (name != value)
-                {
-                    name = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
+        public string Name { get; }
 
-
-        private List<double> values;
         public List<double> Values
         {
             get { return values; }
@@ -54,13 +59,12 @@ namespace CSV_Analyzer
             }
         }
 
-        private List<DateTime> times;
         public List<DateTime> Times
         {
             get { return times; }
-            private set 
-            { 
-            if (times != value)
+            private set
+            {
+                if (times != value)
                 {
                     times = value;
                     OnPropertyChanged();
@@ -68,39 +72,11 @@ namespace CSV_Analyzer
             }
         }
 
-        private List<double> selectedValues;
-        public List<double> SelectedValues
-        {
-            get { return selectedValues; }
-            set
-            {
-                if(selectedValues!=value)
-                {
-                    selectedValues = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
-
-        private List<DateTime> selectedTimes;
-        public List<DateTime> SelectedTimes
-        {
-            get { return selectedTimes; }
-            set 
-            {
-                if (selectedTimes != value)
-                {
-                    selectedTimes = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
-
-        private double minValue;
         public double MinValue
         {
             get { return minValue; }
-            private set {
+            private set
+            {
                 if (minValue != value)
                 {
                     minValue = value;
@@ -109,7 +85,6 @@ namespace CSV_Analyzer
             }
         }
 
-        private double maxValue;
         public double MaxValue
         {
             get { return maxValue; }
@@ -123,7 +98,6 @@ namespace CSV_Analyzer
             }
         }
 
-        private double avgValue;
         public double AvgValue
         {
             get { return avgValue; }
@@ -137,12 +111,12 @@ namespace CSV_Analyzer
             }
         }
 
-        private DateTime timeStart;
 
         public DateTime TimeStart
         {
             get { return timeStart; }
-            set { 
+            set
+            {
                 if (timeStart != value)
                 {
                     timeStart = value;
@@ -151,7 +125,6 @@ namespace CSV_Analyzer
             }
         }
 
-        private DateTime timeEnd;
         public DateTime TimeEnd
         {
             get { return timeEnd; }
@@ -165,25 +138,17 @@ namespace CSV_Analyzer
             }
         }
 
-        public Dataset(string _name, List<DateTime> _times, List<double> _values)
+        internal void AddValue(string value)
         {
-            name = _name;
-            times = _times;
-            selectedTimes = times;
-            values = _values;
-            selectedValues = values;
-            checkTimeframe();
-            TimeStart = timeStart;
-            TimeEnd = timeEnd;
-            UpdateStatistics();
+            values.Add(String2Double.GetDouble(value, 0));
         }
 
-
-        public void UpdateStatistics()
+        internal void AddTime(string time)
         {
-            MinValue = selectedValues.Min();
-            MaxValue = selectedValues.Max();
-            AvgValue = Math.Round(selectedValues.Average(), 2);
+            if (DateTime.TryParse(time, out DateTime t))
+            {
+                times.Add(t);
+            }
         }
 
         public void UpdateTimeFrame(DateTime timeStart, DateTime timeEnd)
@@ -191,17 +156,20 @@ namespace CSV_Analyzer
             int[] indexes = DateTimeFrame2Indexes.GetIndexes(timeStart, timeEnd, times);
             int startIndex = indexes[0];
             int count = indexes[1] - indexes[0] + 1;
-            selectedTimes = times.GetRange(startIndex, count);
-            selectedValues = values.GetRange(startIndex, count);
+            MinValue = values.GetRange(startIndex, count).Min();
+            MaxValue = values.GetRange(startIndex, count).Max();
+            AvgValue = Math.Round(values.GetRange(startIndex, count).Average(), 2);
         }
 
-        private void checkTimeframe()
+        public void CheckTimeFrame()
         {
-            timeStart = times.Min(p => p);
-            timeEnd = times.Max(p => p);
+            if (times.Count > 1)
+            {
+                timeStart = times.Min();
+                timeEnd = times.Max();
+            }
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
         private void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
