@@ -7,8 +7,9 @@
         xmlns:oxy="http://oxyplot.org/wpf"
     xmlns:local="clr-namespace:CSV_Analyzer"
         mc:Ignorable="d"
-        Title="MainWindow" Height="550" Width="1200"
-        ResizeMode="CanMinimize">
+        Title="CSV Analyzer by K. Witt" Height="550" Width="1200"
+        ResizeMode="CanMinimize"
+        Background="WhiteSmoke">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -36,12 +37,12 @@
                         <RowDefinition Height="*"/>
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
-                    <TextBlock Grid.Row="0" Grid.Column="0" Text="Name Column"/>
-                    <TextBlock Grid.Row="1" Grid.Column="0" Text="Time Column"/>
-                    <TextBlock Grid.Row="2" Grid.Column="0" Text="Value Column"/>
-                    <TextBox Grid.Row="0" Grid.Column="1" Width="20" Margin="10,2,10,2" Text="{Binding Path = ColumnIndexName, Mode=TwoWay}"/>
-                    <TextBox Grid.Row="1" Grid.Column="1" Width="20" Margin="10,2,10,2" Text="{Binding Path = ColumnIndexTime, Mode=TwoWay}"/>
-                    <TextBox Grid.Row="2" Grid.Column="1" Width="20" Margin="10,2,10,2" Text="{Binding Path = ColumnIndexValue, Mode=TwoWay}"/>
+                    <TextBlock Grid.Row="0" Grid.Column="0" Text="Name Column" FontFamily="Helvetica" FontWeight="Medium"/>
+                    <TextBlock Grid.Column="0" Text="Time Column" FontFamily="Helvetica" FontWeight="Medium" Margin="0,22,0,22" Grid.RowSpan="3"/>
+                    <TextBlock Grid.Row="2" Grid.Column="0" Text="Value Column" FontFamily="Helvetica" FontWeight="Medium"/>
+                    <TextBox Grid.Row="0" Grid.Column="1" Margin="10,2,10,2" Width="30" Text="{Binding Path = ColumnIndexName, Mode=TwoWay}"/>
+                    <TextBox Grid.Row="1" Grid.Column="1" Margin="10,2,10,2" Width="30" Text="{Binding Path = ColumnIndexTime, Mode=TwoWay}"/>
+                    <TextBox Grid.Row="2" Grid.Column="1" Margin="10,2,10,2" Width="30" Text="{Binding Path = ColumnIndexValue, Mode=TwoWay}"/>
                 </Grid>
 
             </StackPanel>
@@ -55,9 +56,9 @@
             </Button>
         </StackPanel>
         <StackPanel Grid.Row="1" Orientation="Horizontal" VerticalAlignment="Center">
-            <StackPanel Orientation="Vertical">
-                <TextBlock Text="Available variables:"/>
-                <ListBox Name="ListBox_Variables" MaxHeight="180" ItemsSource="{Binding Path=Datasets}"  SelectionMode="Multiple" SelectionChanged="ListBox_Variables_SelectionChanged" ScrollViewer.VerticalScrollBarVisibility="Auto" MinWidth="300" MinHeight="200">
+            <StackPanel Orientation="Vertical"  Margin="10,0,0,0">
+                <TextBlock Text="Available variables:"  FontFamily="Helvetica" FontWeight="Medium"/>
+                <ListBox Name="ListBox_Variables" MaxHeight="180" ItemsSource="{Binding Path=Datasets}"  SelectionMode="Multiple" SelectionChanged="ListBox_Variables_SelectionChanged" ScrollViewer.VerticalScrollBarVisibility="Auto" MinWidth="300" MinHeight="200" Background="WhiteSmoke" BorderBrush="#808080" BorderThickness="1">
                     <ListBox.ItemContainerStyle>
                         <Style TargetType="{x:Type ListBoxItem}">
                             <Setter Property="IsSelected" Value="{Binding IsSelected}"/>
@@ -76,9 +77,9 @@
                     </ListBox.ItemTemplate>
                 </ListBox>
             </StackPanel>
-            <StackPanel Orientation="Vertical">
-                <TextBlock Text="Selected variables:"/>
-                <DataGrid MaxHeight="180" Name="ItemsControl_SelectedVariables" ItemsSource="{Binding Path=Datasets, Mode=TwoWay}" MinWidth="263" MaxWidth="263" MinHeight="200" AutoGenerateColumns="False" SelectionMode="Extended" IsReadOnly="True" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+            <StackPanel Orientation="Vertical"  Margin="10,0,0,0">
+                <TextBlock Text="Selected variables:"  FontFamily="Helvetica" FontWeight="Medium"/>
+                <DataGrid MaxHeight="180" Name="ItemsControl_SelectedVariables" ItemsSource="{Binding Path=Datasets, Mode=TwoWay}" MinWidth="263" MaxWidth="263" MinHeight="200" AutoGenerateColumns="False" SelectionMode="Extended" IsReadOnly="True" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" Background="WhiteSmoke" BorderBrush="#808080" BorderThickness="1">
                     <DataGrid.ItemContainerStyle>
                         <Style TargetType="DataGridRow">
                             <Setter Property="Visibility" Value="Collapsed" />
@@ -94,7 +95,7 @@
                         <DataGridTextColumn Header="Min" Binding="{Binding MinValue}" MinWidth="50"/>
                         <DataGridTextColumn Header="Max" Binding="{Binding MaxValue}" MinWidth="50"/>
                         <DataGridTextColumn Header="Avg" Binding="{Binding AvgValue}" MinWidth="50"/>
-                    </DataGrid.Columns>                  
+                    </DataGrid.Columns>
                 </DataGrid>
                 <Grid>
                     <Grid.ColumnDefinitions>
@@ -110,20 +111,18 @@
                             <RowDefinition Height="20"/>
                             <RowDefinition Height="20"/>
                         </Grid.RowDefinitions>
-                        <TextBlock Grid.Row="0" Grid.Column="0" Margin="0,0,10,0" Text="Timeframe Start"/>
-                        <TextBlock Grid.Row="1" Grid.Column="0" Margin="0,0,10,0" Text="Timeframe End"/>
-                        <TextBox Name="TextBox_TimeframeStart" Grid.Row="0"  Grid.Column="1" HorizontalAlignment="Left" Text="{Binding Path=SelectedTimeStart, Mode=TwoWay,  StringFormat='yyyy-MM-dd HH:mm:ss '}" VerticalAlignment="Top" Width="120"/>
-                        <TextBox Name="TextBox_TimeframeEnd" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Left" Text="{Binding Path=SelectedTimeEnd, Mode=TwoWay,  StringFormat='yyyy-MM-dd HH:mm:ss '}" VerticalAlignment="Top" Width="120"/>
+                        <TextBlock Grid.Row="0" Grid.Column="0" Margin="0,0,10,0" Text="Timeframe Start"  FontFamily="Helvetica" FontWeight="Medium"/>
+                        <TextBlock Grid.Row="1" Grid.Column="0" Margin="0,0,10,0" Text="Timeframe End"  FontFamily="Helvetica" FontWeight="Medium"/>
+                        <TextBox Name="TextBox_TimeframeStart" Grid.Row="0"  Grid.Column="1" Width="120" Text="{Binding Path=SelectedTimeStart, Mode=TwoWay,  StringFormat='yyyy-MM-dd HH:mm:ss '}"/>
+                        <TextBox Name="TextBox_TimeframeEnd" Grid.Row="1" Grid.Column="1" Width="120" Text="{Binding Path=SelectedTimeEnd, Mode=TwoWay,  StringFormat='yyyy-MM-dd HH:mm:ss '}"/>
                     </Grid>
                     <Button Name="Button_ApplyTimeframes" Grid.Column="1" Content="Apply" Height="40" Width="50" Click="Button_ApplyTimeframes_Click"/>
                 </Grid>
             </StackPanel>
 
-            <Grid MinWidth="600" MinHeight="300">
-                <oxy:PlotView x:Name="Plot_SelectedVariables" Model="{Binding PlotModel}"  Grid.Row="1">
-
-                </oxy:PlotView>
-            </Grid>
+            <Border MinWidth="580" MinHeight="300">
+                <oxy:PlotView x:Name="Plot_SelectedVariables" Model="{Binding PlotModel}"  Grid.Row="1" Background="WhiteSmoke"/>
+            </Border>
         </StackPanel>
     </Grid>
 </Window>

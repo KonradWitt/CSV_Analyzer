@@ -150,9 +150,10 @@ namespace CSV_Analyzer
         {
             foreach (Dataset dataset in Datasets.Where(p => p.IsSelected))
             {
-                dataset.CheckTimeFrame();
+                dataset.CheckTimeFrame();   
                 SelectedTimeStart = dataset.TimeStart;
-                SelectedTimeEnd = dataset.TimeEnd;
+                SelectedTimeEnd = dataset.TimeEnd; 
+                dataset.UpdateTimeFrame(SelectedTimeStart, SelectedTimeEnd);
             }
             
             updatePlotModel();
@@ -197,9 +198,9 @@ namespace CSV_Analyzer
             PlotModel.LegendPosition = LegendPosition.TopRight;
             PlotModel.LegendBackground = OxyColor.FromAColor(200, OxyColors.White);
             PlotModel.LegendBorder = OxyColors.Black;
-            var dateAxis = new OxyPlot.Axes.DateTimeAxis() { MajorGridlineStyle = LineStyle.Solid, MinorGridlineStyle = LineStyle.Dot, IntervalLength = 30, StringFormat = "dd.MM.yyyy hh:mm", Angle = 45, Minimum = DateTimeAxis.ToDouble(selectedTimeStart), Maximum = DateTimeAxis.ToDouble(selectedTimeEnd) };
+            var dateAxis = new OxyPlot.Axes.DateTimeAxis() { MajorGridlineStyle = LineStyle.Solid, MinorGridlineStyle = LineStyle.Dot, IntervalLength = 30, StringFormat = "dd.MM.yyyy hh:mm", Angle = 55, Minimum = DateTimeAxis.ToDouble(selectedTimeStart), Maximum = DateTimeAxis.ToDouble(selectedTimeEnd), Font = "Helvetica", FontWeight = 500, TitleFont = "Helvetica", TitleFontWeight = 500 };
             PlotModel.Axes.Add(dateAxis);
-            var valueAxis = new OxyPlot.Axes.LinearAxis() { MajorGridlineStyle = LineStyle.Solid, IntervalLength = 25, MinorGridlineStyle = LineStyle.Dot, Title = "Value" };
+            var valueAxis = new OxyPlot.Axes.LinearAxis() { MajorGridlineStyle = LineStyle.Solid, IntervalLength = 25, MinorGridlineStyle = LineStyle.Dot, Font = "Helvetica", FontWeight = 500, TitleFont = "Helvetica", TitleFontWeight = 500 };
             PlotModel.Axes.Add(valueAxis);
             PlotModel.Series.Clear();
             PlotModel.InvalidatePlot(true);

@@ -45,3 +45,6 @@ D:\RepoWitt\CSV_Analyzer\CSV_Analyzer\obj\Debug\net5.0-windows\CSV_Analyzer.cspr
 D:\RepoWitt\CSV_Analyzer\CSV_Analyzer\bin\Debug\net5.0-windows\OxyPlot.dll
 D:\RepoWitt\CSV_Analyzer\CSV_Analyzer\bin\Debug\net5.0-windows\OxyPlot.Wpf.dll
 D:\RepoWitt\CSV_Analyzer\CSV_Analyzer\obj\Debug\net5.0-windows\CSV_Analyzer.csproj.AssemblyReference.cache
+D:\RepoWitt\CSV_Analyzer\CSV_Analyzer\obj\Debug\net5.0-windows\ButtonTheme.baml
+D:\RepoWitt\CSV_Analyzer\CSV_Analyzer\obj\Debug\net5.0-windows\App.baml
+D:\RepoWitt\CSV_Analyzer\CSV_Analyzer\obj\Debug\net5.0-windows\TextBoxTheme.baml

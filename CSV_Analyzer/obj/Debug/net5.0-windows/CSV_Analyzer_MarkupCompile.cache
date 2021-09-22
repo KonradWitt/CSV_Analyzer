@@ -10,11 +10,11 @@ none
 false
 TRACE;DEBUG;NET;NET5_0;NETCOREAPP
 D:\RepoWitt\CSV_Analyzer\CSV_Analyzer\App.xaml
-1-1644662438
+39157367
 
 7-1672207475
 195-1378733245
-Views\MainWindow.xaml;
+ButtonTheme.xaml;TextBoxTheme.xaml;Views\MainWindow.xaml;
 
 False
 
