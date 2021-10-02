@@ -150,30 +150,52 @@ namespace CSV_Analyzer
         {
             foreach (Dataset dataset in Datasets.Where(p => p.IsSelected))
             {
-                dataset.CheckTimeFrame();   
-                SelectedTimeStart = dataset.TimeStart;
-                SelectedTimeEnd = dataset.TimeEnd; 
+                if (Datasets.Where(p => p.IsSelected).Count() == 1)
+                {
+                    dataset.CheckTimeFrame();
+                    SelectedTimeStart = dataset.TimeStart;
+                    SelectedTimeEnd = dataset.TimeEnd;
+                }                 
                 dataset.UpdateTimeFrame(SelectedTimeStart, SelectedTimeEnd);
+                updatePlotModel(dataset);
             }
             
-            updatePlotModel();
+            
         }
 
 
         private void Button_ApplyTimeframes_Click(object sender, RoutedEventArgs e)
         {
-            foreach (Dataset dataset in Datasets.Where(p => p.IsSelected))
+            if (Datasets != null && Datasets.Any(p => p.IsSelected))
             {
-                dataset.TimeStart = selectedTimeStart;
-                dataset.TimeEnd = selectedTimeEnd;
-                dataset.UpdateTimeFrame(selectedTimeStart, selectedTimeEnd);
+                foreach (Dataset dataset in Datasets.Where(p => p.IsSelected))
+                {
+                    dataset.TimeStart = selectedTimeStart;
+                    dataset.TimeEnd = selectedTimeEnd;
+                    dataset.UpdateTimeFrame(selectedTimeStart, selectedTimeEnd);
+                    updatePlotModel(dataset);
+                }
             }
 
-            if (Datasets.Any(p => p.IsSelected))
-            {
-                updatePlotModel();
-            }
+        }
 
+        private void DataGrid_VariablesPreprocessing_CellEditEnding(object sender, System.Windows.Controls.DataGridCellEditEndingEventArgs e)
+        {
+            if (Datasets != null && Datasets.Any(p => p.IsSelected))
+            {
+                foreach (Dataset dataset in Datasets.Where(p => p.IsSelected))
+                {
+                    if (e.Row.Item.Equals(dataset))
+                    { 
+                    dataset.TimeStart = selectedTimeStart;
+                    dataset.TimeEnd = selectedTimeEnd;
+                    dataset.PreprocessValues();
+                    dataset.UpdateTimeFrame(selectedTimeStart, selectedTimeEnd);
+                    updatePlotModel(dataset);
+                    }
+                }
+            }
+            
         }
 
         private PlotModel plotModel;
@@ -195,7 +217,7 @@ namespace CSV_Analyzer
             PlotModel.LegendTitle = "Legend";
             PlotModel.LegendOrientation = LegendOrientation.Horizontal;
             PlotModel.LegendPlacement = LegendPlacement.Outside;
-            PlotModel.LegendPosition = LegendPosition.TopRight;
+            PlotModel.LegendPosition = LegendPosition.RightMiddle;
             PlotModel.LegendBackground = OxyColor.FromAColor(200, OxyColors.White);
             PlotModel.LegendBorder = OxyColors.Black;
             var dateAxis = new OxyPlot.Axes.DateTimeAxis() { MajorGridlineStyle = LineStyle.Solid, MinorGridlineStyle = LineStyle.Dot, IntervalLength = 30, StringFormat = "dd.MM.yyyy hh:mm", Angle = 55, Minimum = DateTimeAxis.ToDouble(selectedTimeStart), Maximum = DateTimeAxis.ToDouble(selectedTimeEnd), Font = "Helvetica", FontWeight = 500, TitleFont = "Helvetica", TitleFontWeight = 500 };
@@ -206,7 +228,7 @@ namespace CSV_Analyzer
             PlotModel.InvalidatePlot(true);
         }
 
-        private void updatePlotModel()
+        private void updatePlotModel(Dataset changedDataset)
         {
             for (int i = PlotModel.Series.Count - 1; i >= 0; i--)
             {
@@ -215,8 +237,10 @@ namespace CSV_Analyzer
                     PlotModel.Series.RemoveAt(i);
                 }
             }
-
-
+            if (PlotModel.Series.Any(p => p.Title == changedDataset.Name))
+            {
+                PlotModel.Series.Remove(PlotModel.Series.First(p => p.Title == changedDataset.Name));
+            }
             foreach (var selectedDataset in Datasets.Where(p => p.IsSelected))
             {
                 if (!PlotModel.Series.Any(p => p.Title == selectedDataset.Name))
@@ -224,24 +248,25 @@ namespace CSV_Analyzer
                     var lineserie = new LineSeries();
                     foreach (var timestamp in selectedDataset.Times)
                     {
-                        lineserie.Points.Add(new DataPoint(DateTimeAxis.ToDouble(timestamp), selectedDataset.Values[selectedDataset.Times.IndexOf(timestamp)]));
+                        lineserie.Points.Add(new DataPoint(DateTimeAxis.ToDouble(timestamp), selectedDataset.PreprocessedValues[selectedDataset.Times.IndexOf(timestamp)]));
                     }
                     lineserie.Title = selectedDataset.Name;
+                    lineserie.CanTrackerInterpolatePoints = false;
                     PlotModel.Series.Add(lineserie);
                 }
             }
 
-
             PlotModel.Axes[0].Minimum = DateTimeAxis.ToDouble(selectedTimeStart);
             PlotModel.Axes[0].Maximum = DateTimeAxis.ToDouble(selectedTimeEnd);
             PlotModel.InvalidatePlot(true);
-
         }
+
 
         public event PropertyChangedEventHandler PropertyChanged;
         private void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
+
     }
 }
