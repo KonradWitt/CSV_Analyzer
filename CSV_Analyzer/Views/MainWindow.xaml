@@ -80,7 +80,7 @@
             </StackPanel>
             <StackPanel Orientation="Vertical" Margin="10,0,0,0">
                 <TextBlock Text="Variables preprocessing:"  FontFamily="Helvetica" FontWeight="Medium"/>
-                <DataGrid MaxHeight="180" Name="DataGrid_VariablesPreprocessing" ItemsSource="{Binding Path=Datasets, Mode=TwoWay}" Width="350" MinHeight="200" AutoGenerateColumns="False" SelectionMode="Extended" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" Background="WhiteSmoke" BorderBrush="#808080" BorderThickness="1" CellEditEnding="DataGrid_VariablesPreprocessing_CellEditEnding" >
+                <DataGrid MaxHeight="180" Name="DataGrid_VariablesPreprocessing" ItemsSource="{Binding Path=Datasets, Mode=TwoWay}" Width="350" MinHeight="200" AutoGenerateColumns="False" SelectionMode="Extended" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" Background="WhiteSmoke" BorderBrush="#808080" BorderThickness="1" CellEditEnding="DataGrid_VariablesPreprocessing_CellEditEnding" CanUserSortColumns="False">
                     <DataGrid.ItemContainerStyle>
                         <Style TargetType="DataGridRow">
                             <Setter Property="Visibility" Value="Collapsed" />
@@ -101,7 +101,7 @@
             </StackPanel>
             <StackPanel Orientation="Vertical"  Margin="10,0,0,0">
                 <TextBlock Text="Analyzed variables:"  FontFamily="Helvetica" FontWeight="Medium"/>
-                <DataGrid MaxHeight="180" Name="ItemsControl_SelectedVariables" ItemsSource="{Binding Path=Datasets, Mode=TwoWay}" Width="300" MinHeight="200" AutoGenerateColumns="False" SelectionMode="Extended" IsReadOnly="True" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" Background="WhiteSmoke" BorderBrush="#808080" BorderThickness="1">
+                <DataGrid MaxHeight="180" Name="ItemsControl_SelectedVariables" ItemsSource="{Binding Path=Datasets, Mode=TwoWay}" Width="300" MinHeight="200" AutoGenerateColumns="False" SelectionMode="Extended" IsReadOnly="True" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" Background="WhiteSmoke" BorderBrush="#808080" BorderThickness="1" CanUserSortColumns="False">
                     <DataGrid.ItemContainerStyle>
                         <Style TargetType="DataGridRow">
                             <Setter Property="Visibility" Value="Collapsed" />

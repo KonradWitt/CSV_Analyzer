@@ -148,25 +148,28 @@ namespace CSV_Analyzer
 
         private void ListBox_Variables_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
-            foreach (Dataset dataset in Datasets.Where(p => p.IsSelected))
+            foreach (Dataset dataset in e.AddedItems)
             {
                 if (Datasets.Where(p => p.IsSelected).Count() == 1)
                 {
                     dataset.CheckTimeFrame();
                     SelectedTimeStart = dataset.TimeStart;
                     SelectedTimeEnd = dataset.TimeEnd;
-                }                 
+                }
                 dataset.UpdateTimeFrame(SelectedTimeStart, SelectedTimeEnd);
                 updatePlotModel(dataset);
             }
-            
-            
+
+            foreach (Dataset dataset in e.RemovedItems)
+            {
+                updatePlotModel(dataset);
+            }
         }
 
 
         private void Button_ApplyTimeframes_Click(object sender, RoutedEventArgs e)
         {
-            if (Datasets != null && Datasets.Any(p => p.IsSelected))
+            if (Datasets != null && Datasets.Any(p => p.IsSelected) && selectedTimeEnd > selectedTimeStart)
             {
                 foreach (Dataset dataset in Datasets.Where(p => p.IsSelected))
                 {
@@ -181,21 +184,12 @@ namespace CSV_Analyzer
 
         private void DataGrid_VariablesPreprocessing_CellEditEnding(object sender, System.Windows.Controls.DataGridCellEditEndingEventArgs e)
         {
-            if (Datasets != null && Datasets.Any(p => p.IsSelected))
-            {
-                foreach (Dataset dataset in Datasets.Where(p => p.IsSelected))
-                {
-                    if (e.Row.Item.Equals(dataset))
-                    { 
-                    dataset.TimeStart = selectedTimeStart;
-                    dataset.TimeEnd = selectedTimeEnd;
-                    dataset.PreprocessValues();
-                    dataset.UpdateTimeFrame(selectedTimeStart, selectedTimeEnd);
-                    updatePlotModel(dataset);
-                    }
-                }
-            }
-            
+            Dataset preprocessedDataset = (Dataset)e.Row.DataContext;
+            preprocessedDataset.TimeStart = selectedTimeStart;
+            preprocessedDataset.TimeEnd = selectedTimeEnd;
+            preprocessedDataset.PreprocessValues();
+            preprocessedDataset.UpdateTimeFrame(selectedTimeStart, selectedTimeEnd);
+            updatePlotModel(preprocessedDataset);
         }
 
         private PlotModel plotModel;
@@ -230,31 +224,24 @@ namespace CSV_Analyzer
 
         private void updatePlotModel(Dataset changedDataset)
         {
-            for (int i = PlotModel.Series.Count - 1; i >= 0; i--)
-            {
-                if (!Datasets.Where(p => p.IsSelected).Any(p => p.Name == PlotModel.Series[i].Title))
-                {
-                    PlotModel.Series.RemoveAt(i);
-                }
-            }
+            
             if (PlotModel.Series.Any(p => p.Title == changedDataset.Name))
             {
                 PlotModel.Series.Remove(PlotModel.Series.First(p => p.Title == changedDataset.Name));
             }
-            foreach (var selectedDataset in Datasets.Where(p => p.IsSelected))
+
+            if (changedDataset.IsSelected)
             {
-                if (!PlotModel.Series.Any(p => p.Title == selectedDataset.Name))
+                var lineserie = new LineSeries();
+                foreach (var timestamp in changedDataset.Times)
                 {
-                    var lineserie = new LineSeries();
-                    foreach (var timestamp in selectedDataset.Times)
-                    {
-                        lineserie.Points.Add(new DataPoint(DateTimeAxis.ToDouble(timestamp), selectedDataset.PreprocessedValues[selectedDataset.Times.IndexOf(timestamp)]));
-                    }
-                    lineserie.Title = selectedDataset.Name;
-                    lineserie.CanTrackerInterpolatePoints = false;
-                    PlotModel.Series.Add(lineserie);
+                    lineserie.Points.Add(new DataPoint(DateTimeAxis.ToDouble(timestamp), changedDataset.PreprocessedValues[changedDataset.Times.IndexOf(timestamp)]));
                 }
+                lineserie.Title = changedDataset.Name;
+                lineserie.CanTrackerInterpolatePoints = false;
+                PlotModel.Series.Add(lineserie);
             }
+
 
             PlotModel.Axes[0].Minimum = DateTimeAxis.ToDouble(selectedTimeStart);
             PlotModel.Axes[0].Maximum = DateTimeAxis.ToDouble(selectedTimeEnd);
